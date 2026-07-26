@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hệ thống gợi ý phim</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 650px;
+            margin: 50px auto;
+            padding: 0 20px;
+            background: #f4f6f8;
+            color: #222;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        h2 {
+            margin-top: 0;
+            color: #1a2a4a;
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-bottom: 16px;
+        }
+        button {
+            background: #2f5fdb;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover { background: #1e46b0; }
+        #result { margin-top: 25px; }
+        #result h3 {
+            font-size: 17px;
+            border-bottom: 2px solid #2f5fdb;
+            padding-bottom: 8px;
+        }
+        .movie-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #f0f3fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .movie-title { font-weight: 500; }
+        .similarity {
+            font-size: 13px;
+            color: #2f5fdb;
+            background: #e3ebff;
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+        .loading { color: #888; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🎬 Hệ thống gợi ý phim</h2>
+        <label for="movieSelect">Chọn một phim bạn thích:</label>
+        <select id="movieSelect">
+            {% for movie in movies %}
+            <option value="{{ movie.movieId }}">{{ movie.title }}</option>
+            {% endfor %}
+        </select>
+        <button onclick="getRecommendation()">Gợi ý phim tương tự</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function getRecommendation() {
+            const movieId = document.getElementById('movieSelect').value;
+            document.getElementById('result').innerHTML = '<p class="loading">Đang tìm gợi ý...</p>';
+
+            fetch('/api/recommend?movie_id=' + movieId)
+                .then(res => res.json())
+                .then(data => {
+                    let html = '<h3>Vì bạn thích: ' + data.original + '</h3>';
+                    data.recommendations.forEach(m => {
+                        html += '<div class="movie-item">' +
+                                    '<span class="movie-title">' + m.title + '</span>' +
+                                    '<span class="similarity">' + m.similarity + '</span>' +
+                                '</div>';
+                    });
+                    document.getElementById('result').innerHTML = html;
+                });
+        }
+    </script>
+</body>
+</html>
