@@ -36,7 +36,7 @@ def predict_rating(user_id, movie_id):
     return weighted_sum / sim_sum
 
 
-# Tính RMSE trên tập test (lấy mẫu 200 dòng cho nhanh)
+# Tính RMSE trên tập test (lấy mẫu 200 dòng)
 sample_test = test.sample(min(200, len(test)), random_state=42)
 predictions = []
 actuals = []
